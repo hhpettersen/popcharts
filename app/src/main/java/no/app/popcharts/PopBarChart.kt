@@ -33,18 +33,18 @@ fun PopBarChart(
     Row {
         YAxis(
             modifier = Modifier.background(Color.LightGray),
-            maxHeight = maxHeight
+            maxHeight = maxHeight,
         )
         Column {
             ChartView(
                 modifier = modifier,
                 entries = entries,
                 borderColor = Color.Black,
-                maxHeight = maxHeight
+                maxHeight = maxHeight,
             )
             XAxis(
                 labels = entries.map { it.toString() },
-                labelCount = 4
+                labelCount = 4,
             )
         }
     }
@@ -53,10 +53,10 @@ fun PopBarChart(
 @Composable
 private fun YAxis(
     modifier: Modifier = Modifier,
-    maxHeight: Dp
+    maxHeight: Dp,
 ) {
     Column(
-        modifier = modifier
+        modifier = modifier,
     ) {
         repeat(4) {
             Text(
@@ -65,7 +65,7 @@ private fun YAxis(
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .background(Color.Green)
-                    .height(maxHeight / 4)
+                    .height(maxHeight / 4),
             )
         }
     }
@@ -92,7 +92,7 @@ private fun XAxis(
                     text = label,
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,
-                    color = Color.Black
+                    color = Color.Black,
                 )
             }
         }
@@ -104,11 +104,11 @@ private fun ChartView(
     modifier: Modifier = Modifier,
     entries: List<Float>,
     borderColor: Color,
-    maxHeight: Dp
+    maxHeight: Dp,
 ) {
     val density = LocalDensity.current
     val strokeWidth = with(density) { 1.dp.toPx() }
-    
+
     Row(
         modifier = modifier.then(
             Modifier
@@ -120,25 +120,25 @@ private fun ChartView(
                         color = borderColor,
                         start = Offset(0f, size.height),
                         end = Offset(size.width, size.height),
-                        strokeWidth = strokeWidth
+                        strokeWidth = strokeWidth,
                     )
                     // draw Y-Axis
                     drawLine(
                         color = borderColor,
                         start = Offset(0f, 0f),
                         end = Offset(0f, size.height),
-                        strokeWidth = strokeWidth
+                        strokeWidth = strokeWidth,
                     )
-                }
+                },
         ),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.Bottom,
     ) {
         entries.forEach { item ->
             Bar(
                 value = item,
                 color = Color.Blue,
-                maxHeight = maxHeight
+                maxHeight = maxHeight,
             )
         }
     }
@@ -148,9 +148,8 @@ private fun ChartView(
 private fun RowScope.Bar(
     value: Float,
     color: Color,
-    maxHeight: Dp
+    maxHeight: Dp,
 ) {
-
     val itemHeight = remember(value) { value * maxHeight.value / 100 }
 
     Spacer(
@@ -158,7 +157,7 @@ private fun RowScope.Bar(
             .padding(horizontal = 5.dp)
             .height(itemHeight.dp)
             .weight(1f)
-            .background(color)
+            .background(color),
     )
 }
 
@@ -167,6 +166,6 @@ private fun RowScope.Bar(
 private fun PreviewBarChart() {
     PopBarChart(
         entries = listOf(10f, 20f, 30f, 40f, 50f, 60f, 70f, 80f),
-        maxHeight = 200.dp
+        maxHeight = 200.dp,
     )
 }
