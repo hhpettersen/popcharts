@@ -1,12 +1,16 @@
 package no.app.popcharts
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,6 +19,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -26,6 +31,7 @@ fun LineGraph(
     axisLabelColor: Color = Color.Black,
     gridLineColor: Color = Color.LightGray,
     useBezier: Boolean = false,
+    startFromZero: Boolean = false,
 ) {
     val horizontalPadding = 40.dp
     val verticalPadding = 40.dp
@@ -38,11 +44,13 @@ fun LineGraph(
         // ... Axis labels and grid lines code ...
         val yAxisLabels = listOf("Min", "Mid", "Max")
         val xAxisLabels = listOf("Start", "Mid", "End")
+        var canvasWidth = 0f
 
         Canvas(
             modifier = Modifier.fillMaxWidth().height(200.dp)
                 .padding(bottom = horizontalPadding, start = verticalPadding),
         ) {
+            canvasWidth = size.width
             val max = dataPoints.maxOrNull() ?: return@Canvas
             val min = dataPoints.minOrNull() ?: return@Canvas
             val distance = max - min
@@ -94,7 +102,8 @@ fun LineGraph(
         )
 
         XAxisLabels(
-            xAxisLabels = xAxisLabels,
+            modifier = Modifier.align(Alignment.BottomStart),
+            dataPoints = dataPoints,
             horizontalPadding = horizontalPadding,
             axisLabelColor = axisLabelColor,
         )
@@ -122,18 +131,33 @@ private fun BoxWithConstraintsScope.YAxisLabels(
 @Composable
 private fun BoxWithConstraintsScope.XAxisLabels(
     modifier: Modifier = Modifier,
-    xAxisLabels: List<String>,
-    horizontalPadding: Dp,
+    dataPoints: List<Float>,
+    labelCount: Int = 5, // Default to 5 labels
     axisLabelColor: Color,
+    horizontalPadding: Dp,
 ) {
-    xAxisLabels.forEachIndexed { index, label ->
-        Text(
-            text = label,
-            color = axisLabelColor,
-            modifier = modifier
-                .align(Alignment.BottomStart)
-                .padding(start = (index * 100).dp + horizontalPadding, bottom = 4.dp),
-        )
+    // Determine the step size for labels
+    val step = (dataPoints.size - 1) / (labelCount - 1).coerceAtLeast(1)
+    val labels = (0 until labelCount).map { index ->
+        // Calculate the index of the data point that corresponds to the label
+        val dataIndex = (index * step).coerceIn(0, dataPoints.size - 1)
+        // Format the label as needed, for example showing the value or the index
+        (index + 1).toString()
+    }
+
+    Row(
+        modifier = modifier
+            .padding(start = horizontalPadding)
+            .background(Color.Red)
+            .width(with(LocalDensity.current) { maxWidth }),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        labels.forEach { label ->
+            Text(
+                text = label,
+                color = axisLabelColor,
+            )
+        }
     }
 }
 

@@ -51,7 +51,7 @@ android {
 }
 
 dependencies {
-
+    implementation("co.yml:ycharts:2.1.0")
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
